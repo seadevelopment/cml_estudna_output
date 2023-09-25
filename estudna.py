@@ -89,17 +89,6 @@ class ThingsBoard:
         return response["data"]
 
 
-    def getDeviceValues(self, deviceId, keys):
-        """
-        Cteni aktualnich hodnot ze zarizeni
-        """
-        url = f'{self.server}/api/plugins/telemetry/DEVICE/{deviceId}/values/timeseries'
-        params = {'keys': keys}
-        response = httpGet(url, {'X-Authorization': f"Bearer {self.userToken}"}, params=params)
-
-        return response
-    
-
     def setDeviceOutput(self, deviceId, output: str, value: bool):
 
         output = "setDout1" if output == "OUT1" else "setDout2"
@@ -109,17 +98,6 @@ class ThingsBoard:
         response = httpPost(url, {'X-Authorization': f"Bearer {self.userToken}"}, params={}, data=data)
 
         return response
-
-
-def eStudna_GetWaterLevel(username: str, password: str, serialNumber: str) -> float:
-    """
-    Cteni hladiny ve studni
-    """
-    tb = ThingsBoard()
-    tb.login(username, password)
-    user_devices = tb.getDevicesByName(f"%{serialNumber}")
-    values = tb.getDeviceValues(user_devices[0]["id"]["id"], "ain1")
-    return values["ain1"][0]["value"]
 
 
 def eStudna_SetOutput(username: str, password: str, serialNumber: str, output: str, state: bool):
