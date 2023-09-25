@@ -114,18 +114,6 @@ class ThingsBoard
         return $response->data;         // Return list of devices
     }
 
-    /**
-     * Cteni aktualnich hodnot ze zarizeni
-     */
-    public function getDeviceValues($deviceId, $keys)
-    {
-        $url = $this->server . '/api/plugins/telemetry/DEVICE/' . $deviceId .'/values/timeseries?keys=' . $keys;
-        
-        $result = httpGet($url,'X-Authorization: Bearer ' . $this->userToken);
-        $response = json_decode($result);
-  
-        return $response;
-    }
 
     public function setDeviceOutput($deviceId, $output, $value)
     {
@@ -146,17 +134,6 @@ class ThingsBoard
     }
 }
 
-/**
- * Cteni hladiny ve studni
- */
-function eStudna_GetWaterLevel($user,$password,$serialNumber)
-{
-    $tb = new ThingsBoard();
-    $tb->login($user,$password);
-    $devices = $tb->getDevicesByName( '%' . $serialNumber);
-    $values = $tb->getDeviceValues($devices[0]->id->id,'ain1');
-    return $values->ain1[0]->value;  
-}
 
 function eStudna_SetOutput($user, $password, $serialNumber, $output, $value)
 {
@@ -173,9 +150,7 @@ function eStudna_SetOutput($user, $password, $serialNumber, $output, $value)
 
 try
 {
-  $level = eStudna_GetWaterLevel($user, $password, $sn);
   echo('<pre><b>' . $sn . '</b></pre>');
-  echo('<pre>WATER LEVEL [m]: '.$level.'</pre>');
   echo('<pre>OUT1: true</pre>');
   eStudna_SetOutput($user, $password, $sn, "OUT1", False);
   echo('<pre>OUT1: false</pre>');
